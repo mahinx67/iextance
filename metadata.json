@@ -1,0 +1,6 @@
+{
+  "name": "iExtance",
+  "description": "Ultra-clean liquid glass image-to-link studio with high-speed URL generation and visual sharing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
