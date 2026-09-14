@@ -2,6 +2,11 @@ import { ImageItem } from '../types';
 
 const STORAGE_KEY = 'iextance_images_v1';
 
+function getApiUrl(): string {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+  return (env?.VITE_API_URL || '').trim().replace(/\/$/, '');
+}
+
 export function formatBytes(bytes: number, decimals = 1): string {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -78,7 +83,7 @@ export async function processImageFile(file: File): Promise<ImageItem> {
 
         // Try uploading to Telegram bot backend
         try {
-          const res = await fetch('/api/upload', {
+          const res = await fetch(`${getApiUrl()}/api/upload`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -207,4 +212,3 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
-
