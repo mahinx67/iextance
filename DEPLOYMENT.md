@@ -56,3 +56,30 @@ Open `http://localhost:3000` and check `http://localhost:3000/api/health`. The b
 ## Security notes
 
 The Telegram token and admin password are read only from server-side environment variables. The source-download admin flow now uses a short-lived signed bearer token instead of putting a password in frontend JavaScript or a URL query string. The source archive excludes `.env` files, dependencies, build output, and Git metadata.
+
+## Developer API
+
+The backend exposes two authenticated upload routes:
+
+```text
+POST /1/upload?key=YOUR_API_KEY
+POST /api/v1/upload
+```
+
+Use `multipart/form-data` with a file field named `image`. The key may be supplied as the `key` query parameter or the `X-API-Key` header. Successful responses use an ImgBB-style JSON shape with `data.url` for the direct image URL and `data.display_url` for the viewer page.
+
+Create a key with:
+
+```bash
+curl -X POST https://your-api-host.example/api/v1/keys \
+  -H 'Content-Type: application/json' \
+  -d '{"label":"my-app"}'
+```
+
+For stable keys across restarts, set `API_KEY_SECRET` to a long random secret. Set `FRONTEND_URL` to a comma-separated list containing the main frontend and the developer portal domains. The API defaults to a 10 MB image limit and 60 uploads per key per hour. Key issuance is limited to five keys per IP per hour.
+
+## Developer portal
+
+The separate `iextance-developer-portal/` directory is a no-build static site. Upload its four files (`index.html`, `styles.css`, `config.js`, and `app.js`) to Netlify, Cloudflare Pages, GitHub Pages, or any static host. Set `API_BASE_URL` in `config.js` to the public backend URL. The portal includes API documentation, copyable examples, a live API-key generator, limits, and response examples. See its README for the complete hosting checklist.
+
+The current architecture is intentionally database-free and uses signed API keys. Before opening the service to high-volume public traffic, add database-backed developer accounts, persistent quotas, billing, abuse monitoring, and object storage such as Cloudflare R2 or S3.
